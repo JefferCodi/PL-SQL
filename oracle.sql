@@ -130,3 +130,17 @@ EXCEPTION
  WHEN OTHERS then
  estado:= 'el procedimiento fallo: '|| sqlerrm;
 END;
+
+/*TRIGGER*/
+CREATE TABLE auditaemple(col VARCHAR2(200));
+
+CREATE OR REPLACE TRIGGER auditoria_borrado_emple
+BEFORE DELETE
+ON emple
+FOR EACH ROW
+BEGIN
+	INSERT INTO auditaemple
+		VALUES('BORRADO EMPLEADO' || '*' || :old.emple_nombre ||
+			'*' || old.apellido || '*Dpto.' || :old.depa_nombre);
+END;
+
