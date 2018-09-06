@@ -117,3 +117,16 @@ BEGIN
 	UPDATE PRODUCTS
 	SET UNITPRECI = fn_ObtenerPrecioPromedio(PRODUCT_ID);
 END;
+
+/*procedimiento almacenado CON PARAMETROS DE SALIDA*/
+CREATE PROCEDURE pr_ActualizarPrecios
+(estado OUT VARCHAR2)
+AS
+BEGIN 
+	UPDATE PRODUCTS
+	SET UNITPRECE = fn_ObtenerPrecioPromedio(PRODUCT_ID);
+	estado:= 'los precio se actualizaron exitosamente';
+EXCEPTION
+ WHEN OTHERS then
+ estado:= 'el procedimiento fallo: '|| sqlerrm;
+END;
