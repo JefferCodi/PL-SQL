@@ -108,3 +108,12 @@ BEGIN
 	WHERE campo_id = codigoProducto;
 	RETURN precioPromedio;
 END;
+
+
+/*procedimiento almacenado*/
+CREATE PROCEDURE pr_ActualizarPrecios
+AS
+BEGIN 
+	UPDATE PRODUCTS
+	SET UNITPRECI = fn_ObtenerPrecioPromedio(PRODUCT_ID);
+END;
