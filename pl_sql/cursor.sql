@@ -138,3 +138,42 @@ EXCEPTION
   WHEN OTHERS THEN
     NULL;
 END;
+
+--crea un procedimiento para mostrar un informe completo de las reservas de todos los usuarios de la base de datos 
+CREATE OR REPLACE PROCEDURE Informe_reservas_completo
+IS
+	CURSOR c_user IS
+		SELECT id_usuario FROM usuario;
+	CURSOR c_reserva(p_usuario reserva.ID_Usauario%TYPE) IS
+		SELECT * FROM reserva
+		WHERE id_usuario = p_usuario;
+	nom usuario.nombre%TYPE;
+	estado varchar2(30);
+	filas number;
+BEGIN
+   	dbms_output.put_line('Informe de reserva Completo');
+   	dbms_output.put_line('----------------------------------------');
+   	FOR r_user IN c_user LOOP
+   		SELECT nombre INTO nom FROM usuario
+   		WHERE id_usuario = r_user.id_usuario;
+   		dbms_output.put_line('* '||nom);
+   		filas := 0;
+   		FOR r_reserva IN c_reserva(r_user.id_usuario) LOOP
+   			IF r_reserva.fecha_fin IS NULL THEN
+   				estado := 'Pendiente de devolución';
+   			ELSE
+   				estado := r_reserva.periodo;
+   			END IF;
+   			filas := c_reserva%ROWCOUNT;
+   			dbms_output.put_line(filas|| ' .- El equipo id '||r_reserva.id
+   				||' está en estado: '||estado);
+   		END LOOP;
+   		IF filas = 0 THEN
+   			dbms_output.put_line('-> sin reservas');
+   		END IF;
+   	END LOOP;
+   	dbms_output.put_line('------------ FIN DEL INFORME -------------');
+ EXCEPTION
+   WHEN OTHERS THEN
+     NULL;
+ END; 
