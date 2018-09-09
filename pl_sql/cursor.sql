@@ -75,3 +75,46 @@ END;
 		- %ROWCOUNT = devuelve el numero de registro que han sido procesado
 		  hasta ese momento.
 */
+
+DECLARE
+	CURSOR c_nuevo IS
+		SELECT salario, cedula
+		FROM empleados
+	r_nuevo c_nuevo%ROWTYPE;
+BEGIN
+	FOR r_nuevo IN c_nuevo LOOP
+		dbms_output.put_line(r_nuevo.cedula||' '||r_nuevo.salario);
+	END LOOP;
+EXCEPTION
+  WHEN OTHERS THEN
+    NULL;
+END;
+
+
+--crea un procedimiento que saque por consola un informe de todas las reservas que tienr un usuario que se pasa por parametro .
+CREATE OR REPLACE PROCEDURE Informe_reservas(usr reserva.ID_Usauario%TYPE)
+IS
+	CURSOR c_info IS
+		SELECT * FROM reserva
+		WHERE id_usuario=usr;
+	nom usuario.nombre%TYPE;
+	estado varchar2(30);
+BEGIN
+	SELECT nombre INTO nom FROM usuario
+	WHERE id_usuario=usr;
+	dbms_output.put_line('Informe de reserv del usuario: '|| nom);
+	dbms_output.put_line('-------------------------------------------');
+	FOR r_info in c_info LOOP
+		IF r_info.fecha_fin IS NULL THEN
+			estado := 'Pendiente de devolución';
+		ELSE
+			estado := r_info.periodo;
+		END IF;
+		dbms_output.put_line(c_info%ROWCOUNT||' .- El equipo id '||
+			r_info.id ||' está en estado: '||estado);
+	END LOOP;
+	dbms_output.put_line('----------- FIN DEL INFORME ---------------');
+EXCEPTION
+  WHEN OTHERS THEN
+    NULL;
+END;
