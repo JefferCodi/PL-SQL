@@ -118,3 +118,23 @@ EXCEPTION
   WHEN OTHERS THEN
     NULL;
 END;  
+
+-- CURSORES CON PARAMETROS
+DECLARE
+	CURSOR c_empleado(p_nombre in varchar2) IS
+	SELECT salario, cedula 
+	FROM empleados
+	WHERE nombre = p_nombre;
+	r_empleado c_empleado%ROWTYPE;
+	v_nombre varchar2(20);
+BEGIN
+	v_nombre := 'Juan';
+	dbms_output.put_line('Sueldo de los empleados con nombre'|| v_nombre);
+	FOR r_empleado IN c_empleado(v_nombre)LOOP
+		dbms_output.put_line(r_empleado.cedula||' '|| r_empleado.salario);
+	END LOOP;
+
+EXCEPTION
+  WHEN OTHERS THEN
+    NULL;
+END;
